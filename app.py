@@ -539,46 +539,74 @@ def render_ranking(df, filters):
         st.info("Nenhuma moeda encontrada com os filtros selecionados. Ajuste os filtros na barra lateral.")
         return
 
-    # Contadores
-    col1, col2, col3, col4 = st.columns(4)
-    buy_strong = len(filtered[filtered["classificacao"] == "Excelente"])
-    buy_mod = len(filtered[filtered["classificacao"] == "Bom"])
-    neutral = len(filtered[filtered["classificacao"] == "Neutro"])
-    sell = len(filtered[filtered["classificacao"].isin(["Fraco", "Péssimo"])])
+    # Ler o status clicado dos query parameters (nossa "memória" de filtro)
+    active_filter = st.query_params.get("filter_status", "Todos")
 
-    with col1:
-        st.metric("🟢 Compra Forte", buy_strong)
-    with col2:
-        st.metric("🔵 Compra Moderada", buy_mod)
-    with col3:
-        st.metric("🟡 Neutro", neutral)
-    with col4:
-        st.metric("🔴 Venda", sell)
-
-    st.markdown("")
-
-    # Filtro interativo no topo da tabela
-    filter_options = ["Todos", "Excelente", "Bom", "Neutro", "Venda"]
-    captions = {
-        "Todos": "📋 Exibir Todos",
-        "Excelente": "🟢 Compra Forte",
-        "Bom": "🔵 Compra Moderada",
-        "Neutro": "🟡 Neutro",
-        "Venda": "🔴 Venda"
-    }
-    
-    selected_status = st.pills(
-        "Filtre a tabela clicando nas classificações:",
-        options=filter_options,
-        format_func=lambda x: captions[x],
-        default="Todos",
-    )
-
-    if selected_status and selected_status != "Todos":
-        if selected_status == "Venda":
+    if active_filter != "Todos":
+        if active_filter == "Venda":
             filtered = filtered[filtered["classificacao"].isin(["Fraco", "Péssimo"])]
         else:
-            filtered = filtered[filtered["classificacao"] == selected_status]
+            filtered = filtered[filtered["classificacao"] == active_filter]
+
+    # Contadores calc (depois de aplicar os filtros da sidebar, mas antes do clique)
+    buy_strong = len(df[(df["classificacao"] == "Excelente") & df.index.isin(filtered.index)]) if active_filter != "Todos" else len(filtered[filtered["classificacao"] == "Excelente"])
+    buy_mod = len(df[(df["classificacao"] == "Bom") & df.index.isin(filtered.index)]) if active_filter != "Todos" else len(filtered[filtered["classificacao"] == "Bom"])
+    neutral = len(df[(df["classificacao"] == "Neutro") & df.index.isin(filtered.index)]) if active_filter != "Todos" else len(filtered[filtered["classificacao"] == "Neutro"])
+    sell = len(df[(df["classificacao"].isin(["Fraco", "Péssimo"])) & df.index.isin(filtered.index)]) if active_filter != "Todos" else len(filtered[filtered["classificacao"].isin(["Fraco", "Péssimo"])])
+    
+    # Se já estivesse com filtro dos cards, os contadores teriam que mostrar o total como se não estivesse filtrado (para não sumir)
+    if active_filter != "Todos":
+        # Recalcular apenas com base no df base da sidebar, não influenciado pelo click
+        base_filtered = df.copy()
+        if filters["filter_class"]:
+            base_filtered = base_filtered[base_filtered["classificacao"].isin(filters["filter_class"])]
+        base_filtered = base_filtered[(base_filtered["score"] >= min_score) & (base_filtered["score"] <= max_score)]
+        if filters["mcap_filter"]:
+            base_filtered["mcap_cat"] = base_filtered["market_cap"].apply(classify_market_cap)
+            base_filtered = base_filtered[base_filtered["mcap_cat"].isin(filters["mcap_filter"])]
+        if filters["only_approved"]:
+            base_filtered = base_filtered[base_filtered["filtro_aprovado"]]
+        base_filtered = base_filtered.sort_values("score", ascending=False).head(filters["top_n"])
+        
+        buy_strong = len(base_filtered[base_filtered["classificacao"] == "Excelente"])
+        buy_mod = len(base_filtered[base_filtered["classificacao"] == "Bom"])
+        neutral = len(base_filtered[base_filtered["classificacao"] == "Neutro"])
+        sell = len(base_filtered[base_filtered["classificacao"].isin(["Fraco", "Péssimo"])])
+
+    def render_metric_card(label, count, filter_val):
+        border_color = "rgba(0, 212, 255, 0.4)" if active_filter == filter_val else "rgba(0, 212, 255, 0.08)"
+        bg_card = "linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1))" if active_filter == filter_val else "linear-gradient(135deg, rgba(19, 24, 54, 0.9) 0%, rgba(13, 18, 51, 0.8) 100%)"
+        
+        return f"""
+        <a href="?filter_status={filter_val}" target="_self" style="text-decoration: none; display: block;">
+            <div onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(0,212,255,0.4)'; this.style.boxShadow='0 8px 32px rgba(0,212,255,0.1)';"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='{border_color}'; this.style.boxShadow='0 4px 24px rgba(0,0,0,0.2)';"
+                 style="background: {bg_card}; border: 1px solid {border_color}; border-radius: 16px;
+                        padding: 20px 24px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        box-shadow: 0 4px 24px rgba(0,0,0,0.2); cursor: pointer; text-align: left;">
+                <p style="color: #8892b0; font-weight: 600; font-size: 0.8rem; margin: 0; text-transform: uppercase;">
+                    {label}
+                </p>
+                <h2 style="margin: 5px 0 0 0; font-weight: 700; font-size: 1.8rem;
+                           background: linear-gradient(135deg, #00d4ff, #7c3aed);
+                           -webkit-background-clip: text; color: transparent;">
+                    {count}
+                </h2>
+            </div>
+        </a>
+        """
+
+    col1, col2, col3, col4, col5 = st.columns([1,1,1,1,1])
+    with col1:
+        st.markdown(render_metric_card("🟢 Compra Forte", buy_strong, "Excelente"), unsafe_allow_html=True)
+    with col2:
+        st.markdown(render_metric_card("🔵 Compra Moderada", buy_mod, "Bom"), unsafe_allow_html=True)
+    with col3:
+        st.markdown(render_metric_card("🟡 Neutro", neutral, "Neutro"), unsafe_allow_html=True)
+    with col4:
+        st.markdown(render_metric_card("🔴 Venda", sell, "Venda"), unsafe_allow_html=True)
+    with col5:
+        st.markdown(render_metric_card("📋 Todos", buy_strong+buy_mod+neutral+sell, "Todos"), unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
