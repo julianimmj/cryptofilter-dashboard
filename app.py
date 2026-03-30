@@ -557,6 +557,31 @@ def render_ranking(df, filters):
 
     st.markdown("")
 
+    # Filtro interativo no topo da tabela
+    filter_options = ["Todos", "Excelente", "Bom", "Neutro", "Venda"]
+    captions = {
+        "Todos": "📋 Exibir Todos",
+        "Excelente": "🟢 Compra Forte",
+        "Bom": "🔵 Compra Moderada",
+        "Neutro": "🟡 Neutro",
+        "Venda": "🔴 Venda"
+    }
+    
+    selected_status = st.pills(
+        "Filtre a tabela clicando nas classificações:",
+        options=filter_options,
+        format_func=lambda x: captions[x],
+        default="Todos",
+    )
+
+    if selected_status and selected_status != "Todos":
+        if selected_status == "Venda":
+            filtered = filtered[filtered["classificacao"].isin(["Fraco", "Péssimo"])]
+        else:
+            filtered = filtered[filtered["classificacao"] == selected_status]
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
     # Tabela
     display_df = filtered[[
         "rank", "nome", "simbolo", "preco", "market_cap",
