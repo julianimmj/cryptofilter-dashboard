@@ -167,21 +167,15 @@ def create_score_bar(score, max_score, label=""):
     else:
         color = "#ff1744"
 
-    return f"""
-    <div style="margin: 6px 0;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="color: #a0aec0; font-size: 0.82rem; font-weight: 500;">{label}</span>
-            <span style="color: {color}; font-size: 0.82rem; font-weight: 700;">
-                {score:.1f}/{max_score}
-            </span>
-        </div>
-        <div style="background: rgba(255,255,255,0.06); border-radius: 6px; height: 8px; overflow: hidden;">
-            <div style="background: linear-gradient(90deg, {color}, {color}88);
-                        width: {pct:.0f}%; height: 100%; border-radius: 6px;
-                        transition: width 0.5s ease;"></div>
-        </div>
+    return f"""<div style="margin: 6px 0;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+        <span style="color: #a0aec0; font-size: 0.82rem; font-weight: 500;">{label}</span>
+        <span style="color: {color}; font-size: 0.82rem; font-weight: 700;">{score:.1f}/{max_score}</span>
     </div>
-    """
+    <div style="background: rgba(255,255,255,0.06); border-radius: 6px; height: 8px; overflow: hidden;">
+        <div style="background: linear-gradient(90deg, {color}, {color}88); width: {pct:.0f}%; height: 100%; border-radius: 6px; transition: width 0.5s ease;"></div>
+    </div>
+</div>"""
 
 
 def create_fg_history_chart(history):
@@ -683,35 +677,23 @@ def render_detailed_analysis(df, fear_greed):
 
     # ─── Header da moeda ───
     st.markdown(
-        f"""
-        <div style="background: linear-gradient(135deg, rgba(19,24,54,0.8), rgba(13,18,51,0.6));
-                    border: 1px solid rgba(0,212,255,0.15); border-radius: 16px;
-                    padding: 24px 32px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <img src="{row.get('imagem', '')}" width="48" height="48"
-                     style="border-radius: 50%;"
-                     onerror="this.style.display='none'">
-                <div>
-                    <h2 style="margin: 0; font-size: 1.6rem; color: #e0e6ed !important;">
-                        {row['nome']}
-                        <span style="color: #8892b0; font-size: 0.9rem; font-weight: 400;">
-                            {row['simbolo'].upper()} · #{int(row.get('rank', 0))}
-                        </span>
-                    </h2>
-                    <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center;">
-                        <span style="font-size: 1.3rem; font-weight: 700; color: #e0e6ed;">
-                            ${row['preco']:,.4f}
-                        </span>
-                        <span style="padding: 4px 12px; border-radius: 20px;
-                                     font-weight: 700; font-size: 0.85rem;
-                                     background: {cls['color']}22; color: {cls['color']};">
-                            {cls['emoji']} {total_score:.0f}/100 — {cls['action']}
-                        </span>
-                    </div>
-                </div>
+        f"""<div style="background: linear-gradient(135deg, rgba(19,24,54,0.8), rgba(13,18,51,0.6)); border: 1px solid rgba(0,212,255,0.15); border-radius: 16px; padding: 24px 32px; margin-bottom: 20px;">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <img src="{row.get('imagem', '')}" width="48" height="48" style="border-radius: 50%;" onerror="this.style.display='none'">
+        <div>
+            <h2 style="margin: 0; font-size: 1.6rem; color: #e0e6ed !important;">
+                {row['nome']}
+                <span style="color: #8892b0; font-size: 0.9rem; font-weight: 400;">{row['simbolo'].upper()} · #{int(row.get('rank', 0))}</span>
+            </h2>
+            <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center;">
+                <span style="font-size: 1.3rem; font-weight: 700; color: #e0e6ed;">${row['preco']:,.4f}</span>
+                <span style="padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; background: {cls['color']}22; color: {cls['color']};">
+                    {cls['emoji']} {total_score:.0f}/100 — {cls['action']}
+                </span>
             </div>
         </div>
-        """,
+    </div>
+</div>""",
         unsafe_allow_html=True,
     )
 
@@ -752,19 +734,12 @@ def render_detailed_analysis(df, fear_greed):
             )
 
         # Total
-        bars_html += f"""
-        <div style="margin-top: 12px; padding-top: 12px;
-                    border-top: 1px solid rgba(0,212,255,0.15);">
-            <div style="display: flex; justify-content: space-between;">
-                <span style="color: #e0e6ed; font-size: 1rem; font-weight: 700;">
-                    TOTAL
-                </span>
-                <span style="color: {cls['color']}; font-size: 1.1rem; font-weight: 800;">
-                    {total_score:.0f}/100
-                </span>
-            </div>
-        </div>
-        """
+        bars_html += f"""<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,212,255,0.15);">
+    <div style="display: flex; justify-content: space-between;">
+        <span style="color: #e0e6ed; font-size: 1rem; font-weight: 700;">TOTAL</span>
+        <span style="color: {cls['color']}; font-size: 1.1rem; font-weight: 800;">{total_score:.0f}/100</span>
+    </div>
+</div>"""
 
         st.markdown(bars_html, unsafe_allow_html=True)
 
