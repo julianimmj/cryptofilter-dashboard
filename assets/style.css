@@ -1,0 +1,297 @@
+/* ═══════════════════════════════════════════════════════════
+   CryptoFilter Analysis Dashboard — Premium Dark Theme
+   Paleta: Deep Blue (#0a0e27), Cyan (#00d4ff), Purple (#7c3aed)
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── Base ─── */
+html, body, [class*="stApp"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* ─── Header ─── */
+header[data-testid="stHeader"] {
+    background: rgba(10, 14, 39, 0.85) !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.08);
+}
+
+/* ─── Sidebar ─── */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0d1233 0%, #0a0e27 100%) !important;
+    border-right: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+section[data-testid="stSidebar"] .stSelectbox label,
+section[data-testid="stSidebar"] .stMultiSelect label,
+section[data-testid="stSidebar"] .stSlider label {
+    color: #a0aec0 !important;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ─── Metric Cards ─── */
+[data-testid="stMetric"] {
+    background: linear-gradient(135deg, rgba(19, 24, 54, 0.9) 0%, rgba(13, 18, 51, 0.8) 100%);
+    border: 1px solid rgba(0, 212, 255, 0.12);
+    border-radius: 16px;
+    padding: 20px 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+[data-testid="stMetric"]:hover {
+    border-color: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 212, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+[data-testid="stMetric"] label {
+    color: #8892b0 !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+[data-testid="stMetric"] [data-testid="stMetricValue"] {
+    font-weight: 700;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #00d4ff, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[data-testid="stMetric"] [data-testid="stMetricDelta"] {
+    font-weight: 600;
+}
+
+/* ─── Tabs ─── */
+.stTabs [data-baseweb="tab-list"] {
+    background: rgba(13, 18, 51, 0.6);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+    border: 1px solid rgba(0, 212, 255, 0.08);
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #8892b0;
+    transition: all 0.25s ease;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    color: #00d4ff;
+    background: rgba(0, 212, 255, 0.06);
+}
+
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(124, 58, 237, 0.15)) !important;
+    color: #00d4ff !important;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.stTabs [data-baseweb="tab-highlight"] {
+    display: none;
+}
+
+.stTabs [data-baseweb="tab-border"] {
+    display: none;
+}
+
+/* ─── DataFrames / Tabelas ─── */
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+[data-testid="stDataFrame"] table {
+    font-size: 0.88rem;
+}
+
+/* ─── Buttons ─── */
+.stButton > button {
+    background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 28px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 212, 255, 0.2);
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+}
+
+.stButton > button:active {
+    transform: translateY(0);
+}
+
+/* ─── Expanders ─── */
+[data-testid="stExpander"] {
+    background: rgba(13, 18, 51, 0.5);
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+[data-testid="stExpander"] summary {
+    font-weight: 600;
+    color: #e0e6ed;
+}
+
+[data-testid="stExpander"] summary:hover {
+    color: #00d4ff;
+}
+
+/* ─── Progress Bar ─── */
+.stProgress > div > div {
+    background: linear-gradient(90deg, #00d4ff, #7c3aed) !important;
+    border-radius: 8px;
+}
+
+/* ─── Select / Input ─── */
+[data-baseweb="select"] {
+    border-radius: 10px !important;
+}
+
+[data-baseweb="select"] > div {
+    background: rgba(13, 18, 51, 0.8) !important;
+    border: 1px solid rgba(0, 212, 255, 0.15) !important;
+    border-radius: 10px !important;
+}
+
+/* ─── Divider ─── */
+hr {
+    border-color: rgba(0, 212, 255, 0.08) !important;
+}
+
+/* ─── Custom Classes via markdown ─── */
+.score-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* ─── Glassmorphism Container ─── */
+.glass-card {
+    background: rgba(19, 24, 54, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+/* ─── Title gradient ─── */
+h1 {
+    background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #ff6b9d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    color: #e0e6ed !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.01em;
+}
+
+h3 {
+    color: #a0aec0 !important;
+    font-weight: 600 !important;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(10, 14, 39, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.4);
+}
+
+/* ─── Animations ─── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.animate-fade {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ─── Status indicators ─── */
+.status-buy { color: #00e676; }
+.status-sell { color: #ff1744; }
+.status-neutral { color: #ffd600; }
+
+/* ─── Plotly chart backgrounds ─── */
+.js-plotly-plot .plotly .modebar {
+    background: transparent !important;
+}
+
+/* ─── Alert/Info boxes ─── */
+[data-testid="stAlert"] {
+    border-radius: 12px;
+    border-left-width: 4px;
+}
+
+/* ─── Toast notifications ─── */
+[data-testid="stToast"] {
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+}
+
+/* ─── Column gap fix ─── */
+[data-testid="stHorizontalBlock"] {
+    gap: 1rem;
+}
+
+/* ─── Spinner ─── */
+[data-testid="stSpinner"] {
+    color: #00d4ff;
+}
+
+/* ─── Link styling ─── */
+a {
+    color: #00d4ff !important;
+    text-decoration: none !important;
+    transition: opacity 0.2s ease;
+}
+
+a:hover {
+    opacity: 0.8;
+}
