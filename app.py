@@ -366,8 +366,21 @@ def render_sidebar():
             """
             <div style="text-align: center; padding-top: 16px; color: #4a5568;
                         font-size: 0.7rem;">
-                <p>Dados: CoinGecko · DeFiLlama · Alternative.me</p>
                 <p>Cache: 1 hora · Atualiza automaticamente</p>
+            </div>
+            <div style="text-align: center; padding-top: 12px; border-top: 1px solid rgba(0,212,255,0.08);
+                        margin-top: 12px;">
+                <p style="color: #8892b0; font-size: 0.72rem; margin-bottom: 6px;">Powered by</p>
+                <a href="https://www.coingecko.com/en/api?utm_source=cryptofilter&utm_medium=referral"
+                   target="_blank" style="color: #8dc647 !important; font-weight: 600;
+                   font-size: 0.82rem; text-decoration: none !important;">🦎 CoinGecko API</a>
+                <p style="color: #4a5568; font-size: 0.65rem; margin-top: 8px;">
+                    Data also provided by
+                    <a href="https://defillama.com" target="_blank"
+                       style="color: #4a5568 !important;">DeFiLlama</a> ·
+                    <a href="https://alternative.me" target="_blank"
+                       style="color: #4a5568 !important;">Alternative.me</a>
+                </p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -978,6 +991,30 @@ def main():
 
     with tab4:
         render_methodology()
+
+    # ─── Atribuição CoinGecko (obrigatória) ───
+    st.markdown(
+        """
+        <div style="text-align: center; padding: 20px 0 10px 0; margin-top: 32px;
+                    border-top: 1px solid rgba(0,212,255,0.08);">
+            <span style="color: #8892b0; font-size: 0.78rem;">
+                Price data provided by
+                <a href="https://www.coingecko.com?utm_source=cryptofilter&utm_medium=referral"
+                   target="_blank" style="color: #8dc647 !important; font-weight: 600;
+                   text-decoration: none !important;">CoinGecko</a>
+                · TVL data by
+                <a href="https://defillama.com" target="_blank"
+                   style="color: #445ed0 !important; font-weight: 600;
+                   text-decoration: none !important;">DeFiLlama</a>
+                · Sentiment by
+                <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank"
+                   style="color: #e67e22 !important; font-weight: 600;
+                   text-decoration: none !important;">Alternative.me</a>
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 if __name__ == "__main__":
