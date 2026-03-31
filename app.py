@@ -535,12 +535,13 @@ def render_ranking(df, filters):
     # Ordenar por score
     filtered = filtered.sort_values("score", ascending=False).head(filters["top_n"])
 
-    if filtered.empty:
-        st.info("Nenhuma moeda encontrada com os filtros selecionados. Ajuste os filtros na barra lateral.")
-        return
+    if "ranking_filter" not in st.session_state:
+        st.session_state.ranking_filter = "Todos"
 
-    # Ler o status clicado dos query parameters (nossa "memória" de filtro)
-    active_filter = st.query_params.get("filter_status", "Todos")
+    def set_ranking_filter(val):
+        st.session_state.ranking_filter = val
+
+    active_filter = st.session_state.ranking_filter
 
     if active_filter != "Todos":
         if active_filter == "Venda":
@@ -556,7 +557,6 @@ def render_ranking(df, filters):
     
     # Se já estivesse com filtro dos cards, os contadores teriam que mostrar o total como se não estivesse filtrado (para não sumir)
     if active_filter != "Todos":
-        # Recalcular apenas com base no df base da sidebar, não influenciado pelo click
         base_filtered = df.copy()
         if filters["filter_class"]:
             base_filtered = base_filtered[base_filtered["classificacao"].isin(filters["filter_class"])]
@@ -573,40 +573,49 @@ def render_ranking(df, filters):
         neutral = len(base_filtered[base_filtered["classificacao"] == "Neutro"])
         sell = len(base_filtered[base_filtered["classificacao"].isin(["Fraco", "Péssimo"])])
 
-    def render_metric_card(label, count, filter_val):
-        border_color = "rgba(0, 212, 255, 0.4)" if active_filter == filter_val else "rgba(0, 212, 255, 0.08)"
-        bg_card = "linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1))" if active_filter == filter_val else "linear-gradient(135deg, rgba(19, 24, 54, 0.9) 0%, rgba(13, 18, 51, 0.8) 100%)"
-        
-        return f"""
-        <a href="?filter_status={filter_val}" target="_self" style="text-decoration: none; display: block;">
-            <div onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(0,212,255,0.4)'; this.style.boxShadow='0 8px 32px rgba(0,212,255,0.1)';"
-                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='{border_color}'; this.style.boxShadow='0 4px 24px rgba(0,0,0,0.2)';"
-                 style="background: {bg_card}; border: 1px solid {border_color}; border-radius: 16px;
-                        padding: 20px 24px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        box-shadow: 0 4px 24px rgba(0,0,0,0.2); cursor: pointer; text-align: left;">
-                <p style="color: #8892b0; font-weight: 600; font-size: 0.8rem; margin: 0; text-transform: uppercase;">
-                    {label}
-                </p>
-                <h2 style="margin: 5px 0 0 0; font-weight: 700; font-size: 1.8rem;
-                           background: linear-gradient(135deg, #00d4ff, #7c3aed);
-                           -webkit-background-clip: text; color: transparent;">
-                    {count}
-                </h2>
-            </div>
-        </a>
-        """
+    st.markdown("""
+    <style>
+        /* Transform st.button into metric cards dynamically */
+        div[data-testid="stHorizontalBlock"] button {
+            height: 110px !important;
+            white-space: pre-wrap !important;
+            background: linear-gradient(135deg, rgba(19, 24, 54, 0.9) 0%, rgba(13, 18, 51, 0.8) 100%) !important;
+            border: 1px solid rgba(0, 212, 255, 0.12) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2) !important;
+            padding: 10px !important;
+        }
+        div[data-testid="stHorizontalBlock"] button p {
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            color: #8892b0 !important;
+            line-height: 1.8 !important;
+        }
+        /* Make the number part huge */
+        div[data-testid="stHorizontalBlock"] button p strong {
+            font-size: 1.8rem !important;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        div[data-testid="stHorizontalBlock"] button:hover {
+            border-color: rgba(0, 212, 255, 0.5) !important;
+            transform: translateY(-2px) !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
-    col1, col2, col3, col4, col5 = st.columns([1,1,1,1,1])
+    col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        st.markdown(render_metric_card("🟢 Compra Forte", buy_strong, "Excelente"), unsafe_allow_html=True)
+        st.button(f"🟢 COMP. FORTE\n**{buy_strong}**", key="btn_oforte", on_click=set_ranking_filter, args=("Excelente",), use_container_width=True)
     with col2:
-        st.markdown(render_metric_card("🔵 Compra Moderada", buy_mod, "Bom"), unsafe_allow_html=True)
+        st.button(f"🔵 MODERADA\n**{buy_mod}**", key="btn_omod", on_click=set_ranking_filter, args=("Bom",), use_container_width=True)
     with col3:
-        st.markdown(render_metric_card("🟡 Neutro", neutral, "Neutro"), unsafe_allow_html=True)
+        st.button(f"🟡 NEUTRO\n**{neutral}**", key="btn_oneutro", on_click=set_ranking_filter, args=("Neutro",), use_container_width=True)
     with col4:
-        st.markdown(render_metric_card("🔴 Venda", sell, "Venda"), unsafe_allow_html=True)
+        st.button(f"🔴 VENDA\n**{sell}**", key="btn_ovenda", on_click=set_ranking_filter, args=("Venda",), use_container_width=True)
     with col5:
-        st.markdown(render_metric_card("📋 Todos", buy_strong+buy_mod+neutral+sell, "Todos"), unsafe_allow_html=True)
+        st.button(f"📋 TODOS\n**{buy_strong+buy_mod+neutral+sell}**", key="btn_all", on_click=set_ranking_filter, args=("Todos",), use_container_width=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
